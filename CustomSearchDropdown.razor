@@ -1,0 +1,190 @@
+@inherits CustomSearchDropdownBase<T>
+@typeparam T
+
+<MudItem xs="12" sm="6" md="4" lg="2">
+    <div class="mud-input-control-input-container dropdown cursor-pointer" style="padding-left: 6px" @ref="dropdownRef" id="@DropdownId">
+        <div style="position: relative;">
+            <div class="mud-input mud-input-text mud-input-text-with-label mud-input-adorned-end mud-input-underline mud-typography-input d-flex">
+                <input @bind="SearchText" 
+                    @bind:event="oninput" 
+                    type="text" 
+                    label="@Label"
+                    style="max-width: 78%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" 
+                    placeholder="@(IsAllSelected 
+                            ? $"Todos(as) {PluralLabel}" 
+                            : !SelectedItems.Any() 
+                                ? $"{Label}(s)" 
+                                : $"{SelectedItems.Count()} Selecionado(s)")"
+                    class="mud-input-slot mud-input-root mud-input-root-text mud-input-root-adorned-end mud-select-input flex-grow-1" 
+                    id="@($"{DropdownId}Input")"
+                    @onfocus="ShowDropdown" />
+
+                <div class="d-flex align-center" style="margin-right: -16px">
+                    @if (!IsAllSelected && !SelectedItems.Any())
+                    {
+                        <MudIconButton Icon="@(IsDropdownVisible ? Icons.Material.Filled.ArrowDropUp : Icons.Material.Filled.ArrowDropDown)" 
+                            DropShadow="false"
+                            Ripple="false"
+                            Size="Size.Medium" 
+                            Color="Color.Default"
+                            Class="mud-input-adornment mud-input-adornment-end p-0 no-hover-effect"
+                            OnClick="ToggleDropdownVisibility" />
+                    }
+
+                    <div class="d-flex align-center icon-group">
+                        @if (IsAllSelected || SelectedItems.Any())
+                        {
+                            <MudTooltip Text="Limpar Seleção">
+                                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                    Size="Size.Medium" 
+                                    Color="Color.Default" 
+                                    Class="icon-button no-hover-effect"
+                                    OnClick="ClearSelection" />
+                            </MudTooltip>
+
+                            <MudIconButton Icon="@(IsDropdownVisible ? Icons.Material.Filled.ArrowDropUp : Icons.Material.Filled.ArrowDropDown)" 
+                                DropShadow="false"
+                                Ripple="false"
+                                Size="Size.Medium" 
+                                Color="Color.Default"
+                                Class="icon-button no-hover-effect"
+                                OnClick="ToggleDropdownVisibility" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mud-popover-cascading-value mud-list floating-dropdown" 
+            style="@(IsDropdownVisible ? "display: block;" : "display: none;")">
+            
+            <div @onclick="SelectAll" 
+                class="mud-list-item mud-list-item-gutters mud-list-item-clickable mud-ripple @(IsAllSelected ? "mud-selected-item mud-primary-text" : "")">
+                <div class="mud-list-item-icon">
+                    <MudIcon Icon="@(IsAllSelected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)" 
+                            Size="Size.Medium" />
+                </div>
+                <div class="mud-list-item-text">
+                    <p class="mud-typography mud-typography-body1">Todos(as) @PluralLabel</p>
+                </div>
+            </div>
+
+            @foreach (var item in FilteredItems)
+            {
+                <div @onclick="() => SelectItem(item)" 
+                    class="mud-list-item mud-list-item-gutters mud-list-item-clickable mud-ripple @(IsAllSelected || SelectedItems.Contains(item) ? "mud-selected-item mud-primary-text" : "")">
+                    <div class="mud-list-item-icon">
+                        <MudIcon Icon="@(IsAllSelected || SelectedItems.Contains(item) ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank)" 
+                                Size="Size.Medium" />
+                    </div>
+                    <div class="mud-list-item-text">
+                        <p class="mud-typography mud-typography-body1">@ItemTemplate(item)</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</MudItem>
+
+<style>
+    .d-flex.align-center .mud-tooltip-root .mud-button-root.mud-icon-button .mud-icon-root.mud-icon-size-medium {
+    font-size: 1.25rem;
+}
+
+.floating-dropdown {
+    position: absolute;
+    top: 100%; /* Posiciona logo abaixo do input */
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Garante que fique acima de outros elementos */
+    margin-top: 2px; /* Pequeno espaçamento do input */
+    max-height: 300px; /* Altura máxima do dropdown */
+    overflow-y: auto; /* Adiciona scroll se necessário */
+}
+
+.mud-list {
+    padding: 8px 0;
+    background-color: var(--mud-palette-background);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+}
+
+.mud-list-item {
+    padding: 8px 16px;
+    transition: background-color 0.15s linear;
+}
+
+.mud-list-item:hover {
+    background-color: var(--mud-palette-action-default-hover);
+}
+
+.dropdown {
+    position: relative; /* Importante para o posicionamento absoluto do dropdown */
+}
+
+.icon-group {
+    margin-right: -12px;
+    gap: 0;
+}
+
+.icon-button {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 20px !important;
+}
+
+.icon-button ::deep .mud-icon-button-label {
+    padding: 0 !important;
+}
+
+.no-hover-effect:hover {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+.custom-small-checkbox {
+    font-size: 0.875rem !important;
+}
+
+.custom-small-checkbox ::deep .mud-checkbox {
+    padding: 4px;
+}
+
+.dropdown {
+    position: relative;
+    font-family: Arial, sans-serif;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    list-style: none;
+    margin: 5px 0 0;
+    padding: 0;
+    z-index: 1000;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+</style>
