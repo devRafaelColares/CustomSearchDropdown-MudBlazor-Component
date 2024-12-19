@@ -4,7 +4,8 @@ Um componente Blazor reutilizável que implementa um dropdown de pesquisa e sele
 
 ## Demonstração do Projeto
 
-[![Demonstração no YouTube](https://youtu.be/4eIkI5Xt7zI)]
+[![Demonstração no YouTube](https://img.youtube.com/vi/4eIkI5Xt7zI/0.jpg)](https://youtu.be/4eIkI5Xt7zI)
+
 
 ## Características Principais
 
