@@ -2,6 +2,10 @@
 
 Um componente Blazor reutilizável que implementa um dropdown de pesquisa e seleção múltipla com funcionalidades avançadas.
 
+## Demonstração do Projeto
+
+[![Demonstração no YouTube](https://youtu.be/4eIkI5Xt7zI)]
+
 ## Características Principais
 
 - Suporte a tipos genéricos (pode ser usado com qualquer tipo de dados)
